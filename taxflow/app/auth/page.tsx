@@ -1,18 +1,12 @@
 // app/auth/page.tsx
 import AuthForm from "@/components/AuthForm";
+import styles from "./page.module.css";
 
 export default function AuthPage() {
   return (
     <main className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background */}
-      <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
+      <div className={`absolute inset-0 opacity-20 ${styles.gridBackground}`} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-sm animate-slide-up">
