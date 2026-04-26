@@ -2,9 +2,10 @@
 // components/DashboardClient.tsx
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { TaxEntry } from "@/types";
 import { formatCurrency, formatPercent } from "@/lib/tax";
-import { formatRelativeTime } from "@/lib/utils";
+import { formatRelativeTime, formatDate } from "@/lib/utils";
 import {
   AreaChart,
   Area,
@@ -21,7 +22,29 @@ interface Props {
   userEmail: string;
 }
 
+function RelativeTimeDisplay({ dateString }: { dateString: string }) {
+  const [mounted, setMounted] = useState(false);
+  const [time, setTime] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+    setTime(formatRelativeTime(dateString));
+  }, [dateString]);
+
+  return (
+    <span suppressHydrationWarning>
+      {time}
+    </span>
+  );
+}
+
 export default function DashboardClient({ entries, userEmail }: Props) {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const totalIncome = entries.reduce((s, e) => s + e.income, 0);
   const totalTax = entries.reduce((s, e) => s + e.estimated_tax, 0);
   const avgRate =
@@ -68,7 +91,11 @@ export default function DashboardClient({ entries, userEmail }: Props) {
     },
     {
       label: "Last updated",
-      value: latest ? formatRelativeTime(latest.created_at) : "No entries yet",
+      value: latest ? (
+        <RelativeTimeDisplay dateString={latest.created_at} />
+      ) : (
+        "No entries yet"
+      ),
       icon: Clock,
       color: "text-green-400",
       bg: "bg-green-500/10",
@@ -98,7 +125,7 @@ export default function DashboardClient({ entries, userEmail }: Props) {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" suppressHydrationWarning>
         {stats.map((s, i) => (
           <div
             key={s.label}
@@ -221,7 +248,7 @@ export default function DashboardClient({ entries, userEmail }: Props) {
             </Link>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2" suppressHydrationWarning>
             {entries.slice(0, 5).map((entry) => (
               <EntryRow key={entry.id} entry={entry} />
             ))}
@@ -244,7 +271,7 @@ function EntryRow({ entry }: { entry: TaxEntry }) {
             {formatCurrency(entry.income, entry.country)}
           </p>
           <p className="text-xs text-[#555570]">
-            {formatRelativeTime(entry.created_at)}
+            <RelativeTimeDisplay dateString={entry.created_at} />
           </p>
         </div>
       </div>
