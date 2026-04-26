@@ -1,4 +1,4 @@
-// middleware.ts — Next.js 15 compatible
+// middleware.ts — Next.js 15+ compatible
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
@@ -58,6 +58,21 @@ export async function middleware(request: NextRequest) {
   }
 
   return supabaseResponse;
+}
+
+// Configure which routes should run this middleware
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    "/((?!_next/static|_next/image|favicon.ico|public).*)",
+  ],
+};
 }
 
 export const config = {
